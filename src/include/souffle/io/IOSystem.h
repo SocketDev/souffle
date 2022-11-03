@@ -84,6 +84,7 @@ private:
         registerReadStreamFactory(std::make_shared<ReadCinJSONFactory>());
         registerWriteStreamFactory(std::make_shared<WriteFileCSVFactory>());
         registerWriteStreamFactory(std::make_shared<WriteCoutCSVFactory>());
+        registerWriteStreamFactory(std::make_shared<WriteFDOutCSVFactory>());
         registerWriteStreamFactory(std::make_shared<WriteCoutPrintSizeFactory>());
         registerWriteStreamFactory(std::make_shared<WriteFileJSONFactory>());
         registerWriteStreamFactory(std::make_shared<WriteCoutJSONFactory>());
