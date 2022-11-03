@@ -17,7 +17,20 @@
 .decl A(v : MyADT)
 .decl B(v : MyADT)
 
+.comp MyComponent {
+  .type MyADT
+    = A{}
+    | A2{x: number}
+}
+.init MyInstance = MyComponent
+
+.decl C(v : MyInstance.MyADT)
+.decl D(v : MyInstance.MyADT)
+
 B(v) :- A(v).
+D(v) :- C(v).
 
 .input A
 .output B
+.input C
+.output D

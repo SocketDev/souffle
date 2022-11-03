@@ -80,6 +80,7 @@ private:
         registerReadStreamFactory(std::make_shared<ReadFileCSVFactory>());
         registerReadStreamFactory(std::make_shared<ReadCinCSVFactory>());
         registerReadStreamFactory(std::make_shared<ReadFileJSONFactory>());
+        registerReadStreamFactory(std::make_shared<ReadFDCSVFactory>());
         registerReadStreamFactory(std::make_shared<ReadCinJSONFactory>());
         registerWriteStreamFactory(std::make_shared<WriteFileCSVFactory>());
         registerWriteStreamFactory(std::make_shared<WriteCoutCSVFactory>());

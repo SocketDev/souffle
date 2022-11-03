@@ -17,6 +17,7 @@
 #include "souffle/RamTypes.h"
 #include "souffle/RecordTable.h"
 #include "souffle/SymbolTable.h"
+#include "souffle/io/fdstream.h"
 #include "souffle/io/ReadStream.h"
 #include "souffle/utility/ContainerUtil.h"
 #include "souffle/utility/FileUtil.h"
@@ -389,6 +390,66 @@ protected:
 #endif
 };
 
+class ReadFDCSV : public ReadStreamCSV {
+public:
+    ReadFDCSV(const std::map<std::string, std::string>& rwOperation, SymbolTable& symbolTable,
+            RecordTable& recordTable)
+            : ReadStreamCSV(fdHandle, rwOperation, symbolTable, recordTable),
+              fdName(getFDName(rwOperation)),
+              fdHandle(std::stoi(fdName)) {
+                printf("??? fd= %s\n", fdName.c_str());
+        // if (!fdHandle.is()) {
+        //     // suppress error message in case file cannot be open when flag -w is set
+        //     if (getOr(rwOperation, "no-warn", "false") != "true") {
+        //         throw std::invalid_argument("Cannot open fact fd " + fdName + "\n");
+        //     }
+        // }
+        // Strip headers if we're using them
+        if (getOr(rwOperation, "headers", "false") == "true") {
+            std::string line;
+            getline(file, line);
+        }
+    }
+
+    /**
+     * Read and return the next tuple.
+     *
+     * Returns nullptr if no tuple was readable.
+     * @return
+     */
+    Own<RamDomain[]> readNextTuple() override {
+        try {
+            return ReadStreamCSV::readNextTuple();
+        } catch (std::exception& e) {
+            std::stringstream errorMessage;
+            errorMessage << e.what();
+            errorMessage << "cannot parse fact fd " << fdName << "!\n";
+            throw std::invalid_argument(errorMessage.str());
+        }
+    }
+
+    ~ReadFDCSV() override = default;
+
+protected:
+    /**
+     * Return given filename or construct from relation name.
+     * Default name is [configured path]/[relation name].facts
+     *
+     * @param rwOperation map of IO configuration options
+     * @return input filename
+     */
+    static std::string getFDName(const std::map<std::string, std::string>& rwOperation) {
+        return getOr(rwOperation, "fd", "0");
+    }
+
+    std::string fdName;
+// #ifdef USE_LIBZ
+//     gzfstream::igzfstream fdHandle;
+// #else
+    fdistream fdHandle;
+// #endif
+};
+
 class ReadCinCSVFactory : public ReadStreamFactory {
 public:
     Own<ReadStream> getReader(const std::map<std::string, std::string>& rwOperation, SymbolTable& symbolTable,
@@ -416,6 +477,20 @@ public:
     }
 
     ~ReadFileCSVFactory() override = default;
+};
+
+class ReadFDCSVFactory : public ReadStreamFactory {
+public:
+    Own<ReadStream> getReader(const std::map<std::string, std::string>& rwOperation, SymbolTable& symbolTable,
+            RecordTable& recordTable) override {
+        return mk<ReadFDCSV>(rwOperation, symbolTable, recordTable);
+    }
+
+    const std::string& getName() const override {
+        static const std::string name = "fd";
+        return name;
+    }
+    ~ReadFDCSVFactory() override = default;
 };
 
 } /* namespace souffle */

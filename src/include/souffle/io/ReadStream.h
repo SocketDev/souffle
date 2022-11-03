@@ -149,7 +149,7 @@ protected:
 
         // Consume initial character
         consumeChar(source, '$', pos);
-        std::string constructor = readIdentifier(source, pos);
+        std::string constructor = readQualifiedName(source, pos);
 
         json11::Json branchInfo = [&]() -> json11::Json {
             for (auto branch : branches.array_items()) {
@@ -260,6 +260,28 @@ protected:
         while (pos < source.length()) {
             unsigned char ch = static_cast<unsigned char>(source[pos]);
             bool valid = std::isalnum(ch) || ch == '_' || ch == '?';
+            if (!valid) break;
+            ++pos;
+        }
+
+        return source.substr(bgn, pos - bgn);
+    }
+
+    /**
+     * Read the next alphanumeric + ('_', '?') sequence (corresponding to IDENT).
+     * Consume preceding whitespace.
+     * TODO (darth_tytus): use std::string_view?
+     */
+    std::string readQualifiedName(const std::string& source, std::size_t& pos) {
+        consumeWhiteSpace(source, pos);
+        if (pos >= source.length()) {
+            throw std::invalid_argument("Unexpected end of input");
+        }
+
+        const std::size_t bgn = pos;
+        while (pos < source.length()) {
+            unsigned char ch = static_cast<unsigned char>(source[pos]);
+            bool valid = std::isalnum(ch) || ch == '_' || ch == '?' || ch == '.';
             if (!valid) break;
             ++pos;
         }

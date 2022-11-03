@@ -38,7 +38,7 @@ static constexpr uint64_t LargestPrime64 = 18446744073709551557UL;
 
 // Return a prime greater or equal to the lower bound.
 // Return 0 if the next prime would not fit in 64 bits.
-static uint64_t GreaterOrEqualPrime(const uint64_t LowerBound) {
+static inline uint64_t GreaterOrEqualPrime(const uint64_t LowerBound) {
     if (LowerBound > LargestPrime64) {
         return 0;
     }
