@@ -397,13 +397,6 @@ public:
             : ReadStreamCSV(fdHandle, rwOperation, symbolTable, recordTable),
               fdName(getFDName(rwOperation)),
               fdHandle(std::stoi(fdName)) {
-                printf("??? fd= %s\n", fdName.c_str());
-        // if (!fdHandle.is()) {
-        //     // suppress error message in case file cannot be open when flag -w is set
-        //     if (getOr(rwOperation, "no-warn", "false") != "true") {
-        //         throw std::invalid_argument("Cannot open fact fd " + fdName + "\n");
-        //     }
-        // }
         // Strip headers if we're using them
         if (getOr(rwOperation, "headers", "false") == "true") {
             std::string line;
