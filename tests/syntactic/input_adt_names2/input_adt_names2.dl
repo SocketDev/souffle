@@ -1,0 +1,11 @@
+.comp Component {
+  .type ADT = A {} | A2 { n: number }
+}
+.init MyInstance = Component
+.decl A(value: MyInstance.ADT)
+.decl B(value: MyInstance.ADT)
+
+B(v) :- A(v).
+
+.input A
+.output B

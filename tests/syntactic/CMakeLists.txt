@@ -64,6 +64,7 @@ positive_test(type)
 positive_test(union_comp_type)
 positive_test(dot_identifiers)
 positive_test(input_adt_names1)
+positive_test(input_adt_names2)
 positive_test(input_directive_rfc4180)
 if (NOT MSVC)
 # does not pass with Visual Studio pre-processor because it preserves all whitespaces

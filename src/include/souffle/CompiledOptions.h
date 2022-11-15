@@ -222,6 +222,11 @@ private:
 #endif
         std::cerr << "    -h                           -- prints this help page.\n";
         std::cerr << "--------------------------------------------------------------------\n";
+#ifdef SOUFFLE_GENERATOR_VERSION
+        std::cerr << " Version: " << SOUFFLE_GENERATOR_VERSION << std::endl;
+#endif
+        std::cerr << " Word size: " << RAM_DOMAIN_SIZE << " bits" << std::endl;
+        std::cerr << "--------------------------------------------------------------------\n";
         std::cerr << " Copyright (c) 2016-22 The Souffle Developers." << std::endl;
         std::cerr << " Copyright (c) 2013-16 Oracle and/or its affiliates." << std::endl;
         std::cerr << " All rights reserved.\n";

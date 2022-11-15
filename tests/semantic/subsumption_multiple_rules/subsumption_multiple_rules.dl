@@ -111,5 +111,3 @@ mx(n) <= mx(n) :- my(n).
 .decl nx(x:number)
 nx(n) <= nx(n) :- nx(n).
 .output nx
-
-

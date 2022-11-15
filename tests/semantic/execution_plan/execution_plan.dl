@@ -23,3 +23,28 @@ r3(a,d) :- r3(a,b),r3(b,c),r3(c,d).
 // this one is not
 r4(a,d) :- r4(a,b),r4(b,c),r4(c,d).
         .plan 0: (1,2,2), 1: (3,2), 2: (2,3,1,3)
+
+.decl y(a:S)
+.output y
+
+y(a) :- r1(a,_), r2(a,_), r3(a,_).
+        .plan 0:(1,2,3)
+
+.decl x1(a:number)
+.decl x2(a:number)
+.decl x3(a:number)
+.output x1
+.output x2
+.output x3
+
+// ok
+x1(a) <= x1(b) :- a < b.
+        .plan 0:(1,2)
+
+// Invalid plan: order is only 2.
+x2(a) <= x2(b) :- a < b.
+        .plan 0:(1,2,3)
+
+// Invalid plan: incomplete
+x3(a) <= x3(b) :- a < b.
+        .plan 0:(1,3)

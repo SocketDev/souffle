@@ -47,14 +47,17 @@ bool ExecutionPlanChecker::transform(TranslationUnit& translationUnit) {
         for (const Relation* rel : scc) {
             for (auto&& clause : program.getClauses(*rel)) {
                 if (!recursiveClauses.recursive(clause)) {
+                    if (clause->getExecutionPlan() != nullptr) {
+                        auto order = clause->getExecutionPlan()->getOrders().begin()->second;
+                        report.addError(
+                                "Ignored execution plan for non-recursive clause", order->getSrcLoc());
+                    }
                     continue;
                 }
                 if (clause->getExecutionPlan() == nullptr) {
                     continue;
                 }
-                if (isA<SubsumptiveClause>(clause)) {
-                    continue;
-                }
+
                 std::size_t version = 0;
                 for (const auto* atom : getBodyLiterals<Atom>(*clause)) {
                     if (scc.count(program.getRelation(*atom)) != 0u) {

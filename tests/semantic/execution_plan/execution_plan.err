@@ -11,4 +11,13 @@ Error: Invalid execution order in plan (expected 3 atoms, not 2) in file executi
 Error: Invalid execution order in plan (expected 3 atoms, not 4) in file execution_plan.dl at line 25
         .plan 0: (1,2,2), 1: (3,2), 2: (2,3,1,3)
 ---------------------------------------^---------
-4 errors generated, evaluation aborted
+Error: Ignored execution plan for non-recursive clause in file execution_plan.dl at line 31
+        .plan 0:(1,2,3)
+----------------^-------
+Error: Invalid execution order in plan (expected 2 atoms, not 3) in file execution_plan.dl at line 46
+        .plan 0:(1,2,3)
+----------------^-------
+Error: Invalid execution order in plan (incomplete) in file execution_plan.dl at line 50
+        .plan 0:(1,3)
+----------------^-----
+7 errors generated, evaluation aborted

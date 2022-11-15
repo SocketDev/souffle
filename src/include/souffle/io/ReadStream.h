@@ -250,7 +250,7 @@ protected:
      * Consume preceding whitespace.
      * TODO (darth_tytus): use std::string_view?
      */
-    std::string readIdentifier(const std::string& source, std::size_t& pos) {
+    std::string readQualifiedName(const std::string& source, std::size_t& pos) {
         consumeWhiteSpace(source, pos);
         if (pos >= source.length()) {
             throw std::invalid_argument("Unexpected end of input");
@@ -259,7 +259,7 @@ protected:
         const std::size_t bgn = pos;
         while (pos < source.length()) {
             unsigned char ch = static_cast<unsigned char>(source[pos]);
-            bool valid = std::isalnum(ch) || ch == '_' || ch == '?';
+            bool valid = std::isalnum(ch) || ch == '_' || ch == '?' || ch == '.';
             if (!valid) break;
             ++pos;
         }
