@@ -17,6 +17,7 @@
 #include "souffle/RamTypes.h"
 #include "souffle/RecordTable.h"
 #include "souffle/SymbolTable.h"
+#include "souffle/io/fdstream.h"
 #include "souffle/io/WriteStream.h"
 #include "souffle/utility/ContainerUtil.h"
 #include "souffle/utility/MiscUtil.h"
@@ -261,6 +262,37 @@ protected:
     Lock::Lease lease;
 };
 
+class WriteFDOutCSV : public WriteStreamCSV {
+public:
+    WriteFDOutCSV(const std::map<std::string, std::string>& rwOperation, const SymbolTable& symbolTable,
+            const RecordTable& recordTable)
+            : WriteStreamCSV(rwOperation, symbolTable, recordTable),
+              fdName(getOr(rwOperation,"fd", "1")),
+              fileHandle(std::stoi(fdName)) {
+        // fdName = getOr(rwOperation, "fd", "1");
+        // fileHandle << "---------------\n" << rwOperation.at("name");
+        if (getOr(rwOperation, "headers", "false") == "true") {
+            fileHandle << rwOperation.at("attributeNames") << "\n";
+        }
+        // fileHandle << "\n===============\n";
+        fileHandle << std::setprecision(std::numeric_limits<RamFloat>::max_digits10);
+    }
+
+    ~WriteFDOutCSV() override = default;
+
+protected:
+    void writeNullary() override {
+        fileHandle << "()\n";
+    }
+
+    void writeNextTuple(const RamDomain* tuple) override {
+        writeNextTupleCSV(fileHandle, tuple);
+    }
+
+    std::string fdName;
+    fdostream fileHandle;
+};
+
 class WriteFileCSVFactory : public WriteStreamFactory {
 public:
     Own<WriteStream> getWriter(const std::map<std::string, std::string>& rwOperation,
@@ -305,5 +337,20 @@ public:
     }
     ~WriteCoutPrintSizeFactory() override = default;
 };
+
+class WriteFDOutCSVFactory : public WriteStreamFactory {
+public:
+    Own<WriteStream> getWriter(const std::map<std::string, std::string>& rwOperation,
+            const SymbolTable& symbolTable, const RecordTable& recordTable) override {
+        return mk<WriteFDOutCSV>(rwOperation, symbolTable, recordTable);
+    }
+
+    const std::string& getName() const override {
+        static const std::string name = "fd";
+        return name;
+    }
+    ~WriteFDOutCSVFactory() override = default;
+};
+
 
 } /* namespace souffle */
